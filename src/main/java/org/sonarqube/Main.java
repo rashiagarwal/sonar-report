@@ -20,14 +20,14 @@ public class Main {
 
   public static void main(String[] args) throws IOException {
 
-    Retrofit retrofit = RetrofitBuilder.build();
+    Retrofit retrofit = Builder.build();
 
     final Set<org.sonarqube.model.Issue> issues = new HashSet<>();
     TagController controller = new TagController(retrofit);
     TagResource resource = controller.getResource();
     Set<String> tags = resource.getTags();
     IssueController issueController = new IssueController(retrofit);
-    Arrays.stream(Severity.values()).forEach(
+    Arrays.stream(Severity.values()).parallel().forEach(
         getIssuesBySeverity(issues, tags, issueController)
     );
 

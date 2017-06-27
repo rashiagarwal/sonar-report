@@ -18,7 +18,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class ExcelWriter {
@@ -190,17 +189,19 @@ public class ExcelWriter {
       XSSFCell lineNumber = row.createCell(8);
       lineNumber.setCellValue(issue.getLine());
 
-      XSSFCell startLine = row.createCell(9);
-      startLine.setCellValue(String.valueOf(issue.getTextRange().getStartLine()));
+      if (issue.getTextRange() != null) {
+        XSSFCell startLine = row.createCell(9);
+        startLine.setCellValue(issue.getTextRange().getStartLine());
 
-      XSSFCell endLine = row.createCell(10);
-      endLine.setCellValue(issue.getTextRange().getEndLine());
+        XSSFCell endLine = row.createCell(10);
+        endLine.setCellValue(issue.getTextRange().getEndLine());
 
-      XSSFCell startOffset = row.createCell(11);
-      startOffset.setCellValue(issue.getTextRange().getStartOffset());
+        XSSFCell startOffset = row.createCell(11);
+        startOffset.setCellValue(issue.getTextRange().getStartOffset());
 
-      XSSFCell endOffset = row.createCell(12);
-      endOffset.setCellValue(issue.getTextRange().getEndOffset());
+        XSSFCell endOffset = row.createCell(12);
+        endOffset.setCellValue(issue.getTextRange().getEndOffset());
+      }
 
       XSSFCell author = row.createCell(13);
       author.setCellValue(issue.getAuthor());
