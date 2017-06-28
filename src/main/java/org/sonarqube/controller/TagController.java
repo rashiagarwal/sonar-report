@@ -9,6 +9,7 @@ import retrofit2.Retrofit;
 import java.io.IOException;
 import java.util.Set;
 
+import static java.lang.System.getProperty;
 import static java.util.Collections.emptySet;
 
 public class TagController {
@@ -35,7 +36,7 @@ public class TagController {
   }
 
   private Response<TagResource> execute() throws IOException {
-    Call<TagResource> call = service.listTags("com.usfoods.prime:PrimeAPP");
+    Call<TagResource> call = service.listTags(getProperty("Key"));
     return call.execute();
   }
 }

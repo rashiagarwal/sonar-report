@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static java.util.stream.Collectors.toList;
 
@@ -54,7 +55,7 @@ public class IssueController {
     Type type, String tag) {
     try {
       out.println("Severity = " + severity.name() + "; Type = " + type.name() + "; Tag = " + tag);
-      IssueResource issue = getIssue(severity.name(), type.name(), tag, 1, 500);
+      IssueResource issue = getIssue(severity.name(), type.name(), tag, 1);
       if (issue != null && !issue.getIssues().isEmpty()) {
         int maxPageIndex = getMaxPageIndex(issue);
         for (int pageIndex = 1; pageIndex <= maxPageIndex; pageIndex++) {
@@ -77,32 +78,36 @@ public class IssueController {
   private void getAndAddIssues(Set<Issue> issues, Severity severity, Type type,
     String tag, int pageIndex) throws IOException {
     IssueResource issue;
-    issue = getIssue(severity.name(), type.name(), tag, pageIndex, 500);
+    issue = getIssue(severity.name(), type.name(), tag, pageIndex);
     if (issue != null && !issue.getIssues().isEmpty()) {
       issues.addAll(issue.getIssues());
     }
   }
 
-  private IssueResource getIssue(String severity, String type, String tag, int pageIndex, int pageSize) throws
+  private IssueResource getIssue(String severity, String type, String tag, int pageIndex) throws
     IOException {
-    Response<IssueResource> response = execute(severity, type, tag, pageIndex, pageSize);
+    Response<IssueResource> response = execute(severity, type, tag, pageIndex);
     if (response.isSuccessful()) {
       return response.body();
     }
     return null;
   }
 
-  private Response<IssueResource> execute(String severity, String type, String tag, int pageIndex, int pageSize) throws
+  private Response<IssueResource> execute(String severity, String type, String tag, int pageIndex) throws
     IOException {
 
     Map<String, String> queryMap = new HashMap<>();
-//    queryMap.put("componentRoots", "com.usfoods.prime:PrimeAPP");
+
+    String key = getProperty("Key");
+    if (key != null) {
+      queryMap.put("componentRoots", key);
+    }
     queryMap.put("resolved", String.valueOf(false));
     queryMap.put("severities", severity);
     queryMap.put("types", type);
     queryMap.put("tags", tag);
     queryMap.put("pageIndex", String.valueOf(pageIndex));
-    queryMap.put("pageSize", String.valueOf(pageSize));
+    queryMap.put("pageSize", String.valueOf(500));
 
     Call<IssueResource> call = service.listIssues(queryMap);
 
