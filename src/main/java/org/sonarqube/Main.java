@@ -4,21 +4,22 @@ import org.sonarqube.controller.IssueController;
 import org.sonarqube.controller.TagController;
 import org.sonarqube.model.Issue;
 import org.sonarqube.utility.Excel;
+import org.sonarqube.utility.Sonar;
 import retrofit2.Retrofit;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.sonarqube.utility.Sonar.createConnection;
-
 public class Main {
 
   private static final Set<Issue> issues = new HashSet<>();
 
   public static void main(String[] args) throws IOException {
-
-    Retrofit connection = createConnection();
+    Retrofit connection = Sonar.createConnection();
+    if (connection == null) {
+      return;
+    }
 
     Set<String> tags = getTags(connection);
 
