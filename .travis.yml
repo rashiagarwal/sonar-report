@@ -3,5 +3,5 @@ language: java
 jdk:
  - oraclejdk8
 
-after_success:
-  - mvn clean cobertura:cobertura coveralls:report -DrepoToken=BlZ9n5nBpX4bq9lUwoXfZCcratFdXPqSM
+script:
+  - mvn test cobertura:cobertura coveralls:report -DrepoToken=BlZ9n5nBpX4bq9lUwoXfZCcratFdXPqSM
