@@ -7,6 +7,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import java.io.IOException;
+import java.util.Set;
+
+import static java.util.Collections.emptySet;
 
 public class TagController {
   private TagService service;
@@ -15,7 +18,15 @@ public class TagController {
     this.service = retrofit.create(TagService.class);
   }
 
-  public TagResource getResource() throws IOException {
+  public Set<String> getTags() throws IOException {
+    TagResource resource = getResource();
+    if (resource != null) {
+      return resource.getTags();
+    }
+    return emptySet();
+  }
+
+  private TagResource getResource() throws IOException {
     Response<TagResource> response = execute();
     if (response.isSuccessful()) {
       return response.body();

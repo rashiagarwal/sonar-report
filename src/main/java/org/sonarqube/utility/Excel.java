@@ -13,19 +13,21 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.sonarqube.model.Issue;
+import org.sonarqube.model.TextRange;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-public class ExcelWriter {
+import static java.util.stream.Collectors.joining;
+
+public class Excel {
 
   private XSSFWorkbook workbook;
   private XSSFSheet sheet;
 
-  public ExcelWriter(Set<Issue> issues) throws IOException {
+  public void write(Set<Issue> issues) throws IOException {
     workbook = new XSSFWorkbook();
     String safeName = WorkbookUtil.createSafeSheetName("Issues");
     sheet = workbook.createSheet(safeName);
@@ -160,66 +162,77 @@ public class ExcelWriter {
 
   private void writeRows(Set<Issue> issues) {
     final AtomicInteger rowNum = new AtomicInteger(2);
-    issues.forEach(issue -> {
-      XSSFRow row = sheet.createRow(rowNum.getAndIncrement());
-      XSSFCell key = row.createCell(0, CellType.STRING);
-      key.setCellValue(issue.getKey());
+    issues.forEach(issue -> createRow(rowNum, issue));
+  }
 
-      XSSFCell component = row.createCell(1);
-      component.setCellValue(issue.getComponent());
+  private void createRow(AtomicInteger rowNum, Issue issue) {
+    XSSFRow row = sheet.createRow(rowNum.getAndIncrement());
 
-      XSSFCell project = row.createCell(2);
-      project.setCellValue(issue.getProject());
+    XSSFCell key = row.createCell(0);
+    key.setCellValue(issue.getKey());
 
-      XSSFCell rule = row.createCell(3);
-      rule.setCellValue(issue.getRule());
+    XSSFCell component = row.createCell(1);
+    component.setCellValue(issue.getComponent());
 
-      XSSFCell status = row.createCell(4);
-      status.setCellValue(issue.getStatus());
+    XSSFCell project = row.createCell(2);
+    project.setCellValue(issue.getProject());
 
-      XSSFCell resolution = row.createCell(5);
-      resolution.setCellValue(issue.getResolution());
+    XSSFCell rule = row.createCell(3);
+    rule.setCellValue(issue.getRule());
 
-      XSSFCell severity = row.createCell(6);
-      severity.setCellValue(issue.getSeverity());
+    XSSFCell status = row.createCell(4);
+    status.setCellValue(issue.getStatus());
 
-      XSSFCell message = row.createCell(7);
-      message.setCellValue(issue.getMessage());
+    XSSFCell resolution = row.createCell(5);
+    resolution.setCellValue(issue.getResolution());
 
-      XSSFCell lineNumber = row.createCell(8);
-      lineNumber.setCellValue(issue.getLine());
+    XSSFCell severity = row.createCell(6);
+    severity.setCellValue(issue.getSeverity());
 
-      if (issue.getTextRange() != null) {
-        XSSFCell startLine = row.createCell(9);
-        startLine.setCellValue(issue.getTextRange().getStartLine());
+    XSSFCell message = row.createCell(7);
+    message.setCellValue(issue.getMessage());
 
-        XSSFCell endLine = row.createCell(10);
-        endLine.setCellValue(issue.getTextRange().getEndLine());
+    XSSFCell lineNumber = row.createCell(8);
+    lineNumber.setCellValue(issue.getLine());
 
-        XSSFCell startOffset = row.createCell(11);
-        startOffset.setCellValue(issue.getTextRange().getStartOffset());
+    if (issue.getTextRange() != null) {
+      writeTextRange(issue.getTextRange(), row);
+    }
 
-        XSSFCell endOffset = row.createCell(12);
-        endOffset.setCellValue(issue.getTextRange().getEndOffset());
-      }
+    XSSFCell author = row.createCell(13);
+    author.setCellValue(issue.getAuthor());
 
-      XSSFCell author = row.createCell(13);
-      author.setCellValue(issue.getAuthor());
+    XSSFCell effort = row.createCell(14);
+    effort.setCellValue(issue.getEffort());
 
-      XSSFCell effort = row.createCell(14);
-      effort.setCellValue(issue.getEffort());
+    XSSFCell creationDate = row.createCell(15);
+    creationDate.setCellValue(issue.getCreationDate().toString());
 
-      XSSFCell creationDate = row.createCell(15);
-      creationDate.setCellValue(issue.getCreationDate().toString());
+    XSSFCell updateDate = row.createCell(16);
+    updateDate.setCellValue(issue.getUpdateDate().toString());
 
-      XSSFCell updateDate = row.createCell(16);
-      updateDate.setCellValue(issue.getUpdateDate().toString());
+    XSSFCell tags = row.createCell(17);
+    tags.setCellValue(getCommaSeparatedTags(issue));
 
-      XSSFCell tags = row.createCell(17);
-      tags.setCellValue(issue.getTags().stream().collect(Collectors.joining(", ")));
+    XSSFCell type = row.createCell(18);
+    type.setCellValue(issue.getType());
+  }
 
-      XSSFCell type = row.createCell(18);
-      type.setCellValue(issue.getType());
-    });
+  private void writeTextRange(TextRange textRange, XSSFRow row) {
+    XSSFCell startLine = row.createCell(9);
+    startLine.setCellValue(textRange.getStartLine());
+
+    XSSFCell endLine = row.createCell(10);
+    endLine.setCellValue(textRange.getEndLine());
+
+    XSSFCell startOffset = row.createCell(11);
+    startOffset.setCellValue(textRange.getStartOffset());
+
+    XSSFCell endOffset = row.createCell(12);
+    endOffset.setCellValue(textRange.getEndOffset());
+  }
+
+  private String getCommaSeparatedTags(Issue issue) {
+    return issue.getTags().stream().collect(joining(", "));
   }
 }

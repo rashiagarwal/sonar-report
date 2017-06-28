@@ -31,7 +31,7 @@ public class IssueController {
       IOException {
 
     Map<String, String> queryMap = new HashMap<>();
-    queryMap.put("componentRoots", "com.usfoods.prime:PrimeAPP");
+//    queryMap.put("componentRoots", "com.usfoods.prime:PrimeAPP");
     queryMap.put("resolved", String.valueOf(false));
     queryMap.put("severities", severity);
     queryMap.put("types", type);
