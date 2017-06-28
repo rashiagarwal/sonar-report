@@ -1,5 +1,6 @@
 package org.sonarqube.controller;
 
+import org.apache.log4j.Logger;
 import org.sonarqube.model.Issue;
 import org.sonarqube.model.IssueResource;
 import org.sonarqube.model.Paging;
@@ -11,6 +12,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +21,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.System.getProperty;
-import static java.lang.System.out;
 import static java.util.stream.Collectors.toList;
 
 public class IssueController {
+
+  private static final Logger logger = Logger.getLogger("Sonar Issue");
 
   private IssueService service;
 
@@ -54,7 +57,7 @@ public class IssueController {
   private void fetchAndAddIssuesByTag(Set<Issue> issues, Severity severity,
     Type type, String tag) {
     try {
-      out.println("Severity = " + severity.name() + "; Type = " + type.name() + "; Tag = " + tag);
+      logger.info("Severity = " + severity.name() + "; Type = " + type.name() + "; Tag = " + tag);
       IssueResource issue = getIssue(severity.name(), type.name(), tag, 1);
       if (issue != null && !issue.getIssues().isEmpty()) {
         int maxPageIndex = getMaxPageIndex(issue);
@@ -63,7 +66,7 @@ public class IssueController {
         }
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.error(Arrays.toString(e.getStackTrace()));
     }
   }
 
