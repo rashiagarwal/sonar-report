@@ -20,6 +20,7 @@ public class Main {
 
   public static void main(String[] args) throws IOException {
     post("/issues", (request, res) -> getResponse(request), json());
+    get("/hello", (request, res) -> "Hello World");
 
 //
 //    if (!issues.isEmpty()) {
