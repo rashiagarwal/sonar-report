@@ -9,14 +9,15 @@ import retrofit2.Retrofit;
 import java.io.IOException;
 import java.util.Set;
 
-import static java.lang.System.getProperty;
 import static java.util.Collections.emptySet;
 
 public class TagController {
   private TagService service;
+  private String key;
 
-  public TagController(Retrofit retrofit) {
+  public TagController(Retrofit retrofit, String key) {
     this.service = retrofit.create(TagService.class);
+    this.key = key;
   }
 
   public Set<String> getTags() throws IOException {
@@ -36,7 +37,7 @@ public class TagController {
   }
 
   private Response<TagResource> execute() throws IOException {
-    Call<TagResource> call = service.listTags(getProperty("Key"));
+    Call<TagResource> call = service.listTags(key);
     return call.execute();
   }
 }

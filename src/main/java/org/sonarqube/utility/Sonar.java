@@ -11,13 +11,13 @@ public final class Sonar {
   private Sonar() {
   }
 
-  public static Retrofit createConnection() {
+  public static Retrofit createConnection(String url) {
     try {
-      String url = System.getProperty("url");
+//      String url = System.getProperty("url");
 
       return new Retrofit.Builder().baseUrl(url)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
+          .addConverterFactory(GsonConverterFactory.create())
+          .build();
     } catch (NullPointerException | IllegalArgumentException ex) {
       logger.error(ex.getMessage());
     }

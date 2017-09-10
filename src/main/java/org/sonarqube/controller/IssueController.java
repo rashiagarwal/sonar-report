@@ -28,16 +28,18 @@ public class IssueController {
   private static final Logger logger = Logger.getLogger("Sonar Issue");
 
   private IssueService service;
+  private String key;
 
-  public IssueController(Retrofit retrofit) {
+  public IssueController(Retrofit retrofit, String key) {
     this.service = retrofit.create(IssueService.class);
+    this.key = key;
   }
 
   public void fetchIssues(Set<Issue> issues, Set<String> tags) {
     List<Severity> severities = getSeverities();
 
     severities.parallelStream().forEach(
-      severity -> fetchAndAddIssuesBySeverity(issues, tags, severity));
+        severity -> fetchAndAddIssuesBySeverity(issues, tags, severity));
   }
 
   private void fetchAndAddIssuesBySeverity(Set<Issue> issues, Set<String> tags, Severity severity) {
@@ -55,7 +57,7 @@ public class IssueController {
   }
 
   private void fetchAndAddIssuesByTag(Set<Issue> issues, Severity severity,
-    Type type, String tag) {
+                                      Type type, String tag) {
     try {
       logger.info("Severity = " + severity.name() + "; Type = " + type.name() + "; Tag = " + tag);
       IssueResource issue = getIssue(severity.name(), type.name(), tag, 1);
@@ -79,7 +81,7 @@ public class IssueController {
   }
 
   private void getAndAddIssues(Set<Issue> issues, Severity severity, Type type,
-    String tag, int pageIndex) throws IOException {
+                               String tag, int pageIndex) throws IOException {
     IssueResource issue;
     issue = getIssue(severity.name(), type.name(), tag, pageIndex);
     if (issue != null && !issue.getIssues().isEmpty()) {
@@ -88,7 +90,7 @@ public class IssueController {
   }
 
   private IssueResource getIssue(String severity, String type, String tag, int pageIndex) throws
-    IOException {
+      IOException {
     Response<IssueResource> response = execute(severity, type, tag, pageIndex);
     if (response.isSuccessful()) {
       return response.body();
@@ -97,11 +99,11 @@ public class IssueController {
   }
 
   private Response<IssueResource> execute(String severity, String type, String tag, int pageIndex) throws
-    IOException {
+      IOException {
 
     Map<String, String> queryMap = new HashMap<>();
 
-    String key = getProperty("Key");
+//    String key = getProperty("Key");
     if (key != null) {
       queryMap.put("componentRoots", key);
     }

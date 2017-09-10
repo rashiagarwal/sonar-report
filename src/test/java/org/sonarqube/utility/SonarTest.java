@@ -22,21 +22,21 @@ class SonarTest {
 
   @Test
   void shouldReturnNullWhenUrlIsNotProvided() {
-    assertNull(Sonar.createConnection(), "Connection should be null when url is not provided");
+    assertNull(Sonar.createConnection(""), "Connection should be null when url is not provided");
   }
 
   @Test
   void shouldReturnNullWhenUrlIsIllegal() {
     System.setProperty("url", "illegal-url");
 
-    assertNull(Sonar.createConnection(), "Connection should be null when url is illegal");
+    assertNull(Sonar.createConnection(""), "Connection should be null when url is illegal");
   }
 
   @Test
   void shouldReturnConnectionWhenUrlIsLegal() {
     System.setProperty("url", "http://legal-url.com");
 
-    Retrofit connection = Sonar.createConnection();
+    Retrofit connection = Sonar.createConnection("");
 
     assertEquals("http://legal-url.com/", connection.baseUrl().url().toString());
     assertTrue(connection.converterFactories().get(1) instanceof GsonConverterFactory);
