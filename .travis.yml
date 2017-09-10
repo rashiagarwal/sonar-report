@@ -4,4 +4,5 @@ jdk:
  - oraclejdk8
 
 script:
-  - mvn test cobertura:cobertura coveralls:report -DrepoToken=BlZ9n5nBpX4bq9lUwoXfZCcratFdXPqSM
+  - mvn test cobertura:cobertura
+#  coveralls:report -DrepoToken=BlZ9n5nBpX4bq9lUwoXfZCcratFdXPqSM
