@@ -19,6 +19,7 @@ public class Main {
   private static final Set<Issue> issues = new HashSet<>();
 
   public static void main(String[] args) throws IOException {
+    port(getHerokuAssignedPort());
     post("/issues", (request, res) -> getResponse(request), json());
     get("/hello", (request, res) -> "Hello World");
 
@@ -27,6 +28,14 @@ public class Main {
 //      Excel excel = new Excel();
 //      excel.write(issues);
 //    }
+  }
+
+  static int getHerokuAssignedPort() {
+    ProcessBuilder processBuilder = new ProcessBuilder();
+    if (processBuilder.environment().get("PORT") != null) {
+      return Integer.parseInt(processBuilder.environment().get("PORT"));
+    }
+    return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
   }
 
   private static org.sonarqube.model.Response getResponse(Request request) throws IOException {
