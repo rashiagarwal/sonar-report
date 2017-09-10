@@ -36,7 +36,7 @@ class SonarTest {
   void shouldReturnConnectionWhenUrlIsLegal() {
     System.setProperty("url", "http://legal-url.com");
 
-    Retrofit connection = Sonar.createConnection("");
+    Retrofit connection = Sonar.createConnection("http://legal-url.com");
 
     assertEquals("http://legal-url.com/", connection.baseUrl().url().toString());
     assertTrue(connection.converterFactories().get(1) instanceof GsonConverterFactory);
